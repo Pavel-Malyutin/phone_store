@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load specifications %}
+{% block content %}
+    <nav aria-label="breadcrumb" class="mt-2">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная страница</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'base' %}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4 mt-15">
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.title }}">
+        </div>
+        <div class="col-md-8">
+            <h3>{{ product.title }}</h3>
+                Цена: {{ product.price }}
+                <p style="margin-top: 10px">{{ product.description }}</p>
+        </div>
+        <p class="mt-2">Характеристики:</p>
+        {{ product|product_spec }}
+    </div>
+
+
+{% endblock %}
