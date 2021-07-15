@@ -1,23 +1,26 @@
 from django.shortcuts import render
+from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, View
-from .models import Notebook, Smartphone, Category, LatestProducts
-from .mixins import CategoryDetailMixin
+from .models import Notebook, Smartphone, Category, LatestProducts, Customer, Cart, CartProduct
+from .mixins import CategoryDetailMixin, CartMixin
+from django.contrib import messages
 
 
-class BaseView(View):
+class BaseView(CartMixin, View):
 
     def get(self, request, *args, **kwargs):
         categories = Category.objects.get_categories_for_left_sidebar()
         products = LatestProducts.objects.get_products_for_main_page('notebook', 'smartphone')
         context = {
             'categories': categories,
-            'products_for_main_page': products
+            'products_for_main_page': products,
+            'cart': self.cart,
         }
         return render(request, 'base.html', context)
 
 
-class ProductDetailView(CategoryDetailMixin, DetailView):
-
+class ProductDetailView(CartMixin, CategoryDetailMixin, DetailView):
     CT_MODEL_MODEL_CLASS = {
         'notebook': Notebook,
         'smartphone': Smartphone,
@@ -38,10 +41,69 @@ class ProductDetailView(CategoryDetailMixin, DetailView):
         return context
 
 
-class CategoryDetailView(CategoryDetailMixin, DetailView):
-
+class CategoryDetailView(CartMixin, CategoryDetailMixin, DetailView):
     model = Category
     queryset = Category.objects.all()
     context_object_name = 'category'
     template_name = 'category_detail.html'
     slug_url_kwarg = 'slug'
+
+
+class AddToCartView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product, created = CartProduct.objects.get_or_create(
+            user=self.cart.owner, cart=self.cart, content_type=content_type, object_id=product.id,
+        )
+        if created:
+            self.cart.products.add(cart_product)
+        self.cart.save()
+        messages.add_message(request, messages.INFO, 'Товар добавлен в корзину')
+        return HttpResponseRedirect('/cart/')
+
+
+class DeleteFromCartView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=self.cart.owner, cart=self.cart, content_type=content_type, object_id=product.id,
+        )
+        self.cart.products.remove(cart_product)
+        cart_product.delete()
+        self.cart.save()
+        messages.add_message(request, messages.INFO, 'Товар удален из корзины')
+        return HttpResponseRedirect('/cart/')
+
+
+class ChangeQTYView(CartMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        ct_model, product_slug = kwargs.get('ct_model'), kwargs.get('slug')
+        content_type = ContentType.objects.get(model=ct_model)
+        product = content_type.model_class().objects.get(slug=product_slug)
+        cart_product = CartProduct.objects.get(
+            user=self.cart.owner, cart=self.cart, content_type=content_type, object_id=product.id,
+        )
+        qty = int(request.POST.get('qty'))
+        cart_product.qty = qty
+        cart_product.save()
+        self.cart.save()
+        messages.add_message(request, messages.INFO, 'Количество товара изменено')
+        return HttpResponseRedirect('/cart/')
+
+
+class CartView(CartMixin, View):
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.get_categories_for_left_sidebar()
+        context = {
+            'cart': self.cart,
+            'categories': categories,
+        }
+        return render(request, 'cart.html', context)

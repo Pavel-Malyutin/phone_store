@@ -15,8 +15,9 @@
         </div>
         <div class="col-md-8">
             <h3>{{ product.title }}</h3>
-                Цена: {{ product.price }}
-                <p style="margin-top: 10px">{{ product.description }}</p>
+                Цена: {{ product.price }}<br>
+                <a href="{% url 'add_to_cart' ct_model=ct_model slug=product.slug %}"><button class="btn btn-danger mt-4">Добавить в корзину</button></a>
+                <p style="margin-top: 30px">{{ product.description }}</p>
         </div>
         <p class="mt-2">Характеристики:</p>
         {{ product|product_spec }}
