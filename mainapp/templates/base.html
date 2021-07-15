@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -11,18 +12,11 @@
 
   <title>Тестовый магазин электроники</title>
 
-  <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-  <!-- Custom styles for this template -->
-{#  <link href="css/shop-homepage.css" rel="stylesheet">#}
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
 </head>
-<style>
-    body {
-      padding-top: 56px;
-    }
-</style>
+
 <body>
 
   <!-- Navigation -->
@@ -44,7 +38,7 @@
 
   <!-- Page Content -->
   <div class="container">
-    <div class="row">
+    <div class="row" id="content">
       <div class="col-lg-3 mt-5">
         <h5>Категории:</h5>
           <div class="list-group mt-3">
@@ -86,8 +80,8 @@
           {% for product in products_for_main_page %}
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="card h-100">
-              <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" style="width: auto;height: 130px;display: block; margin: 10px auto;"></a>
-              <div class="card-body" style="text-align: center">
+              <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" ></a>
+              <div class="card-body">
                 <h4 class="card-title">
                   <a href="{{ product.get_absolute_url }}" >{{ product.title }}</a>
                 </h4>

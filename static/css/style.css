@@ -1,0 +1,28 @@
+a {
+  color: black;
+}
+
+h5 {
+  color: #434343;
+  font-size: medium;
+}
+
+.btn-danger {
+  margin-top: 13px;
+}
+
+#content {
+  padding-top: 50px;
+}
+
+.card-img-top, .card-img-small {
+  width: auto;
+  height: 130px;
+  display: block;
+  margin: 10px auto;
+}
+
+.card-body {
+  text-align: center
+}
+
