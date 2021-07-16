@@ -2,7 +2,7 @@
 
 {% block content %}
 
-        <nav aria-label="breadcrumb" class="mt-2">
+    <nav aria-label="breadcrumb" class="mt-2">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'base' %}">Главная страница</a></li>
             <li class="breadcrumb-item active">{{ category.name }}</li>
@@ -13,21 +13,61 @@
 
     <div class="row">
           {% for product in category_products %}
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
-              <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" ></a>
-              <div class="card-body">
-                <h4 class="card-title">
-                  <a href="{{ product.get_absolute_url }}" >{{ product.title }}</a>
-                </h4>
-                  <h5>{{ product.price }} руб.</h5>
-                <a href="{% url 'add_to_cart' ct_model=product.get_model_name slug=product.slug %}">
-                  <button class="btn btn-danger">Добавить в корзину</button>
-                </a>
+              <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                          <a href="{{ product.get_absolute_url }}"><img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.title }}" ></a>
+                              <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="{{ product.get_absolute_url }}" >{{ product.title }}</a>
+                                    </h4>
+                                        <h5>{{ product.price }} руб.</h5>
+                                    <a href="{% url 'add_to_cart' ct_model=product.get_model_name slug=product.slug %}">
+                                        <button class="btn btn-danger">Добавить в корзину</button>
+                                    </a>
+                          </div>
+                    </div>
               </div>
-            </div>
-          </div>
           {% endfor %}
-        </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item  {% if not category_products.has_previous %} disabled {% endif %}">
+                <a class="page-link" href="
+                    {% if category_products.has_previous %}
+{#                        {% url 'category_products:page' category_products.previous_page_number %}#}
+                    {% else %}
+                        #
+                    {% endif %}"
+                   tabindex="-1" aria-disabled="true">Предыдущая</a>
+            </li>
+
+                {% for page in category_products.paginator.page_range %}
+
+                    {% if category_products.number == page %}
+                        <li class="page-item disabled"><span class="page-link">
+                            {{ page }}
+                        </span></li>
+
+                    {% elif page > category_products.number|add:'-5' and page < category_products.number|add:'5' %}
+                        <li class="page-item">
+                            <a class="page-link"
+{#                               href="{% url 'category_products:page' page %}"#}
+                            >{{ page }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+
+            <li class="page-item {% if not category_products.has_next %} disabled {% endif %}">
+                <a class="page-link" href="
+                    {% if category_products.has_next %}
+{#                        {% url 'category_products:page' category_products.next_page_number %}#}
+                    {% else %}
+                        #
+                    {% endif %}"
+                >Следующая</a>
+            </li>
+        </ul>
+    </nav>
 
 {% endblock %}
