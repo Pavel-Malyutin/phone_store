@@ -29,7 +29,7 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'cart' %}">Корзина {% if not cart.products %}<span class="badge badge-pill badge-danger">{{ cart.products.count }}</span>{% endif %}</a>
+            <a class="nav-link" href="{% url 'cart' %}">Корзина {% if cart.products.count > 0 %}<span class="badge badge-pill badge-danger">{{ cart.products.count }}</span>{% endif %}</a>
           </li>
         </ul>
       </div>
