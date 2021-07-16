@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <h3 class="text-center mt-5 mb-5">Контактные данные</h3>
+
+    <form action="{% url 'make_order' %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" class="btn btn-danger btn-block" value="Заказать">
+    </form>
+
+{% endblock content %}

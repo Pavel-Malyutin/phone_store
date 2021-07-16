@@ -29,14 +29,14 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'cart' %}">Корзина <span class="badge badge-pill badge-danger">{{ cart.products.count }}</span></a>
+            <a class="nav-link" href="{% url 'cart' %}">Корзина {% if not cart.products %}<span class="badge badge-pill badge-danger">{{ cart.products.count }}</span>{% endif %}</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Page Content -->
+
   <div class="container">
     <div class="row" id="content">
       <div class="col-lg-3 mt-5">
@@ -47,8 +47,18 @@
             {% endfor %}
         </div>
       </div>
-      <div class="col-lg-9">
-          {% block content %}
+  <div class="col-lg-9">
+        {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+          {% endfor %}
+        {% endif %}
+      {% block content %}
         <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
           <ol class="carousel-indicators">
             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
